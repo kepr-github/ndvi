@@ -2,7 +2,7 @@
 
 # app = FastAPI()
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request 
 app = Flask(__name__)
 
 @app.get("/")
@@ -12,7 +12,10 @@ def index():
 @app.route('/address', methods=['POST'])
 def sample_form_temp():
     print('POSTデータ受け取ったので処理します')
-    return 'POST受け取ったよ'
+    req1 = request.form['data1']
+    return render_template('map.html', address=req1)
+    
+
 
 if __name__ == '__main__':
     app.run()
