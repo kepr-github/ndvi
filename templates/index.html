@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'bootstrap/base.html' %}
 
 {% block title %}home{% endblock %}
 
@@ -6,7 +6,7 @@
 <form action="/address" method="post">
 	<p>住所：<br>
 	<input type="text" name="address"></p>
-	<p><input type="submit" value="送信" id="button"></p>
+	<p><button type="submit" class="btn btn-primary" >送信</button></p>
 </form>
 {% endblock %}
 
