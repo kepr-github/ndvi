@@ -11,8 +11,8 @@ def index():
 
 @app.route('/address', methods=['POST'])
 def sample_form_temp():
-    print('POSTデータ受け取ったので処理します')
     req1 = request.form['data1']
+    print(req1)
     return render_template('map.html', address=req1)
     
 
