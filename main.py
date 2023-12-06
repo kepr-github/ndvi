@@ -11,7 +11,7 @@ def index():
 
 @app.route('/address', methods=['POST'])
 def sample_form_temp():
-    req1 = request.form['data1']
+    req1 = request.form['address']
     print(req1)
     return render_template('map.html', address=req1)
     
