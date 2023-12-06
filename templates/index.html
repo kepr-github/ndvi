@@ -3,10 +3,18 @@
 {% block title %}home{% endblock %}
 
 {% block content %}
-<form action="/address" method="post">
-	<p>住所：<br>
-	<input type="text" name="address"></p>
-	<p><button type="submit" class="btn btn-primary" >送信</button></p>
-</form>
+<div class="container">
+<div class="panel panel-default">
+<div class="panel-heading">フォーム1</div>
+<div class="panel-body">
+    <form action="/address" method="post">
+
+        <label class="control-label">住所</label>
+        <input type="text" name="address">
+        <p><button type="submit" class="btn btn-primary" >送信</button></p>
+    </form>
+</div>
+</div>
+</div>
 {% endblock %}
 

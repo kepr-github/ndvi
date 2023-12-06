@@ -6,11 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- タイトル -->
-    <title>NDVImap-{% block title %}{% endblock %}</title>  
+    <title>NDVI MAP-{% block title %}{% endblock %}</title>  
 </head>
 
 <!-- コンテンツ内容 -->
 <body>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigation">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">NDVIマップ</a>
+          </div>
+        </div>
+    </nav>
     {% block content %}
     {% endblock %}
 </body>
