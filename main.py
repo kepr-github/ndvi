@@ -1,7 +1,7 @@
 from flask_bootstrap import Bootstrap
 from flask import Flask, render_template, request 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='./templates/image')
 bootstrap = Bootstrap(app)
 
 @app.get("/")
@@ -17,7 +17,9 @@ def sample_form_temp():
     else:
         return render_template('index.html')
     
-
+@app.get("/layout")
+def layout():
+    return render_template('layout.html')
 
 if __name__ == '__main__':
     app.run()
