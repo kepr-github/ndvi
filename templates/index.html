@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}ホームページ{% endblock %}
+{% block title %}home{% endblock %}
 
 {% block content %}
 <form action="/address" method="post">
 	<p>住所：<br>
 	<input type="text" name="address"></p>
-	<p><input type="button" value="送信" id="button"></p>
+	<p><input type="submit" value="送信" id="button"></p>
 </form>
 {% endblock %}
 
