@@ -1,8 +1,8 @@
-from flask_bootstrap import Bootstrap
+#from flask_bootstrap import Bootstrap
 from flask import Flask, render_template, request 
 
 app = Flask(__name__, static_folder='./templates/image')
-bootstrap = Bootstrap(app)
+#bootstrap = Bootstrap(app)
 
 @app.get("/")
 def index():
