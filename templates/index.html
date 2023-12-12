@@ -39,17 +39,24 @@
 
 
     <div class="card">
-        <h5 class="card-header">NDVI マップ作成</h5>
-        <div class="card-body">
-            <form action="/address" method="post">
-    
-                <label class="control-label">住所</label>
-                <input type="text" name="address">
-                <p><button type="submit" class="btn btn-primary" >送信</button></p>
-            </form>
-            
-        </div>
-    </div>
+      <h5 class="card-header">NDVI マップ作成</h5>
+      <div class="card-body">
+          <form action="/address" method="post">
+              <!-- 住所入力フィールド -->
+              <div class="form-group">
+                  <label class="control-label">住所</label>
+                  <input type="text" name="address" class="form-control">
+              </div>
+              <!-- 日付入力フィールド -->
+              <div class="form-group">
+                  <label class="control-label">日付</label>
+                  <input type="date" name="date" class="form-control">
+              </div>
+              <button type="submit" class="btn btn-primary">送信</button>
+          </form>
+      </div>
+  </div>
+  
 
   
 

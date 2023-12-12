@@ -90,6 +90,50 @@ def save_ndvi_image(aoi='八代市古閑下町', date_start_str='2023-07-21'):
 
     for result in results:
         print(result)
+    temp_str = results[0]['properties']['datetime']
+    taken_date = temp_str.split('T')[0]
+
+    #True color取得
+    evalscript_true_color = """
+        //VERSION=3
+
+        function setup() {
+            return {
+                input: [{
+                    bands: ["B02", "B03", "B04"]
+                }],
+                output: {
+                    bands: 3
+                }
+            };
+        }
+
+        function evaluatePixel(sample) {
+            return [sample.B04, sample.B03, sample.B02];
+        }
+    """
+
+    request_true_color = SentinelHubRequest(
+        evalscript=evalscript_true_color,
+        input_data=[
+            SentinelHubRequest.input_data(
+                data_collection=DataCollection.SENTINEL2_L2A.define_from(
+                    name="s2l2a", service_url="https://sh.dataspace.copernicus.eu"
+                ),
+                time_interval=time_interval,
+                other_args={"dataFilter": {"mosaickingOrder": "leastCC"}},
+            )
+        ],
+        responses=[SentinelHubRequest.output_response("default", MimeType.PNG)],
+        bbox=aoi_bbox,
+        size=aoi_size,
+        config=config,
+    )
+    true_color_imgs = request_true_color.get_data()
+    true_image = true_color_imgs[0]
+    print(f"Image type: {true_image.dtype}")
+
+    
 
     # NDVI画像取得用のEvalscript
     evalscript_ndvi = """
@@ -151,11 +195,22 @@ def save_ndvi_image(aoi='八代市古閑下町', date_start_str='2023-07-21'):
     ndvi = ndvi_img[0]
     print(f"Image type: {ndvi.dtype}")
 
+    # Matplotlibのsubplotを使用して、TrueColorとNDVIを並べて表示
+    fig, axs = plt.subplots(1,2)
+
+    # Matplotlibを使用してTrueColor画像を表示
+    axs[0].imshow(true_image)
+    axs[0].axis('off')
+
     # Matplotlibを使用してカラーマップを適用
-    plt.imshow(ndvi, cmap='coolwarm')
-    plt.colorbar()  # オプション: カラーバーを表示
-    plt.title(date_start_str)
+    ndvi_im = axs[1].imshow(ndvi, cmap='coolwarm')
+    fig.colorbar(ndvi_im, ax=axs[1])  # オプション: カラーバーを表示
+    plt.suptitle('Photo taken: ' + taken_date)
     plt.axis('off')  # 軸を非表示にする
+
+    # サブプロット間と周辺の余白を調整
+    fig.subplots_adjust(left=0.05)
+
 
     # 画像として保存
     image_path = 'templates/image/temporary/ndvi_image.png'
@@ -163,4 +218,3 @@ def save_ndvi_image(aoi='八代市古閑下町', date_start_str='2023-07-21'):
     plt.close()  # プロットをクローズ
 
     return image_path
-
