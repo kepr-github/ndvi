@@ -6,7 +6,10 @@ import os
 import geopandas as gpd
 import pandas as pd
 import numpy as np
+import matplotlib
+matplotlib.use('Agg') #TkinterとMatplotlibの競合回避のためにMatplotlibの非GUIバックエンドの使用
 import matplotlib.pyplot as plt
+
 import urllib.parse
 import ssl
 from datetime import datetime, timedelta
@@ -155,12 +158,9 @@ def save_ndvi_image(aoi='八代市古閑下町', date_start_str='2023-07-21'):
     plt.axis('off')  # 軸を非表示にする
 
     # 画像として保存
-    image_path = 'ndvi/templates/image/ndvi_image.png'
+    image_path = 'templates/image/temporary/ndvi_image.png'
     plt.savefig(image_path, bbox_inches='tight', pad_inches=0)
     plt.close()  # プロットをクローズ
 
     return image_path
 
-# 関数の使用例
-image_path = save_ndvi_image()  # デフォルト値での呼び出し
-print(f"画像が保存されました: {image_path}")
