@@ -4,6 +4,7 @@ from flask import Flask, render_template, request
 from datetime import datetime
 from sentinel_NDVI import save_ndvi_image
 from json2polygon import load_polygons_from_json, add_polygons_to_map
+import os
 
 app = Flask(__name__, static_folder='./templates/image')
 #bootstrap = Bootstrap(app)
@@ -11,16 +12,23 @@ app = Flask(__name__, static_folder='./templates/image')
 @app.get("/")
 def index():
     # ベースマップを作成
-    map = folium.Map(location=[43.034919066, 141.265117681], zoom_start=15)
+    map = folium.Map(location=[43.873597078, 145.05133317], zoom_start=15)
  
-        
-    file_path = '2023_011011.json'
-    polygons = load_polygons_from_json(file_path)
+    # JSONファイルが保存されているフォルダのパス
+    json_folder_path = 'JSON'  # ここに実際のパスを指定
 
-    add_polygons_to_map(map, polygons)
+    # 指定されたフォルダ内のすべてのJSONファイルを処理
+    for filename in os.listdir(json_folder_path):
+        if filename.endswith('.json'):
+            file_path = os.path.join(json_folder_path, filename)
+            polygons = load_polygons_from_json(file_path)
+            add_polygons_to_map(map, polygons)
+    
+    # マップを HTML 文字列として取得
+    map_html = map._repr_html_()
 
     # HTMLテンプレートにマップをレンダリング
-    return render_template('index.html', map=map._repr_html_())
+    return render_template('index.html', map=map_html)
 
 
 @app.route('/address', methods=['GET', 'POST'])
