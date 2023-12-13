@@ -2,23 +2,16 @@
 
 
 import os
-
 import geopandas as gpd
 import pandas as pd
 import numpy as np
 import matplotlib
 matplotlib.use('Agg') #TkinterとMatplotlibの競合回避のためにMatplotlibの非GUIバックエンドの使用
 import matplotlib.pyplot as plt
-
+import japanize_matplotlib # 日本語を画像タイトルに表示するために必要
 import urllib.parse
 import ssl
 from datetime import datetime, timedelta
-
-# ユーザーに日本の市町村名の入力を求める
-#aoi = input("日本の市町村名を入力（例：「八代市古閑下町」）：")
-
-# 日付の入力と日付範囲の設定
-#date_start_str = input("日付を半角入力（例：2023-10-01）")
 
 
 def save_ndvi_image(aoi='八代市古閑下町', date_start_str='2023-07-21'):
@@ -196,7 +189,7 @@ def save_ndvi_image(aoi='八代市古閑下町', date_start_str='2023-07-21'):
     print(f"Image type: {ndvi.dtype}")
 
     # Matplotlibのsubplotを使用して、TrueColorとNDVIを並べて表示
-    fig, axs = plt.subplots(1,2)
+    fig, axs = plt.subplots(1,2, figsize = (12, 6))
 
     # Matplotlibを使用してTrueColor画像を表示
     axs[0].imshow(true_image)
@@ -204,12 +197,14 @@ def save_ndvi_image(aoi='八代市古閑下町', date_start_str='2023-07-21'):
 
     # Matplotlibを使用してカラーマップを適用
     ndvi_im = axs[1].imshow(ndvi, cmap='coolwarm')
-    fig.colorbar(ndvi_im, ax=axs[1])  # オプション: カラーバーを表示
-    plt.suptitle('Photo taken: ' + taken_date)
+    fig.colorbar(ndvi_im, ax=axs[1])  # カラーバーを表示
     plt.axis('off')  # 軸を非表示にする
 
+    # 全体のタイトルを設定
+    plt.suptitle('Photo taken: ' + aoi + ' @ '+ taken_date)
+
     # サブプロット間と周辺の余白を調整
-    fig.subplots_adjust(left=0.05)
+    fig.subplots_adjust(left=0.05, wspace=0.3)
 
 
     # 画像として保存
