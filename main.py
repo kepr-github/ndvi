@@ -1,4 +1,5 @@
 #from flask_bootstrap import Bootstrap
+import folium
 from flask import Flask, render_template, request 
 from datetime import datetime
 from sentinel_NDVI import save_ndvi_image
@@ -8,7 +9,33 @@ app = Flask(__name__, static_folder='./templates/image')
 
 @app.get("/")
 def index():
-    return render_template('index.html')
+    # ベースマップを作成（ここでは東京の座標を使用）
+    map = folium.Map(location=[35.6895, 139.6917], zoom_start=6)
+
+    # サンプルデータ：ポリゴンとその情報のリスト
+    # 形式：[(ポリゴンの座標, 情報), ...]
+    polygons = [
+        ([[35.6895, 139.6917], [35.6895, 139.7017], [35.6795, 139.7017], [35.6795, 139.6917]], "Polygon 1: Tokyo"),
+        # ここに他のポリゴンとそれぞれの情報を追加
+    ]
+
+    # マップにポリゴンを追加
+    for coords, info in polygons:
+        # ポリゴンを作成
+        polygon = folium.Polygon(
+            locations=coords,
+            color='blue',
+            fill=True,
+            fill_color='blue'
+        )
+        # ポリゴンにポップアップを結び付け
+        polygon.add_child(folium.Popup(info))
+        # ポリゴンをマップに追加
+        polygon.add_to(map)
+
+    # HTMLテンプレートにマップをレンダリング
+    return render_template('index.html', map=map._repr_html_())
+
 
 @app.route('/address', methods=['GET', 'POST'])
 def sample_form_temp():
