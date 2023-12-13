@@ -3,35 +3,21 @@ import folium
 from flask import Flask, render_template, request 
 from datetime import datetime
 from sentinel_NDVI import save_ndvi_image
+from json2polygon import load_polygons_from_json, add_polygons_to_map
 
 app = Flask(__name__, static_folder='./templates/image')
 #bootstrap = Bootstrap(app)
 
 @app.get("/")
 def index():
-    # ベースマップを作成（ここでは東京の座標を使用）
-    map = folium.Map(location=[35.6895, 139.6917], zoom_start=6)
+    # ベースマップを作成
+    map = folium.Map(location=[43.034919066, 141.265117681], zoom_start=15)
+ 
+        
+    file_path = '2023_011011.json'
+    polygons = load_polygons_from_json(file_path)
 
-    # サンプルデータ：ポリゴンとその情報のリスト
-    # 形式：[(ポリゴンの座標, 情報), ...]
-    polygons = [
-        ([[35.6895, 139.6917], [35.6895, 139.7017], [35.6795, 139.7017], [35.6795, 139.6917]], "Polygon 1: Tokyo"),
-        # ここに他のポリゴンとそれぞれの情報を追加
-    ]
-
-    # マップにポリゴンを追加
-    for coords, info in polygons:
-        # ポリゴンを作成
-        polygon = folium.Polygon(
-            locations=coords,
-            color='blue',
-            fill=True,
-            fill_color='blue'
-        )
-        # ポリゴンにポップアップを結び付け
-        polygon.add_child(folium.Popup(info))
-        # ポリゴンをマップに追加
-        polygon.add_to(map)
+    add_polygons_to_map(map, polygons)
 
     # HTMLテンプレートにマップをレンダリング
     return render_template('index.html', map=map._repr_html_())
