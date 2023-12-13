@@ -2,9 +2,9 @@
 import folium
 from flask import Flask, render_template, request 
 from datetime import datetime
-from sentinel_NDVI import save_ndvi_image
 from json2polygon import load_polygons_from_json, add_polygons_to_map
 import os
+from NDVI_from_uuid import save_ndvi_image_from_uuid
 
 app = Flask(__name__, static_folder='./templates/image')
 #bootstrap = Bootstrap(app)
@@ -33,12 +33,13 @@ def index():
 
 @app.route('/address', methods=['GET', 'POST'])
 def sample_form_temp():
-    req1 = request.form['address']
-    print(req1)
+
     if request.method == 'POST':
-         # フォームから'address'と'date'を取得
-        req1 = request.form['address']
+         # フォームから'uuid'と'date'を取得
+        req1 = request.form['uuid']
         req2 = request.form['date']  # 日付のデータをフォームから取得
+
+        print(req1, req2)
         # 日付の形式が正しいかチェック
         try:
             # 日付の形式を確認（'YYYY-MM-DD'形式であることを確認）
@@ -49,10 +50,10 @@ def sample_form_temp():
             return render_template('index.html', error=error_msg)
         
         # 関数の使用
-        image_path = save_ndvi_image(aoi=req1, date_start_str=req2)  
+        image_path = save_ndvi_image_from_uuid(polygon_uuid=req1, date_start_str=req2)  
         print(f"画像が保存されました: {image_path}")
         # 'map.html'にデータを渡してレンダリング
-        return render_template('map.html', address=req1, date=req2, image_path=image_path)
+        return render_template('map.html', polygon_uuid=req1, date=req2, image_path=image_path)
     else:
         return render_template('index.html')
     

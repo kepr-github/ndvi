@@ -12,6 +12,7 @@ def load_polygons_from_json(file_path, encoding='utf-8'):
     list of tuple: ポリゴンの座標とUUIDを含むリスト。
     """
     try:
+        
         # JSONファイルを指定されたエンコーディングで読み込む
         with open(file_path, 'r', encoding=encoding) as file:
             data = json.load(file)
@@ -59,3 +60,31 @@ def add_polygons_to_map(map, polygons):
         polygon.add_child(folium.Popup(popup_text))
         # ポリゴンをマップに追加
         polygon.add_to(map)
+
+
+def get_coordinates_from_uuid(file_path, polygon_uuid):
+    """
+    GeoJSONファイルから特定のUUIDを持つポリゴンの座標を抽出します。
+
+    パラメータ:
+    file_path (str): GeoJSONファイルへのファイルパス。
+    polygon_uuid (str): 検索するポリゴンのUUID。
+
+    戻り値:
+    list: ポリゴンの座標のリスト。見つからない場合はNoneを返します。
+    """
+    try:
+        # ファイルを開いてデータを読み込む
+        with open(file_path, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+
+        
+        
+        for feature in data['features']:
+            # UUIDが一致するか確認
+            if feature['properties'].get('polygon_uuid') == polygon_uuid:
+                # UUIDが一致したら座標を返す
+                return feature['geometry']['coordinates']
+    except Exception as e:
+        print(f"エラーが発生しました: {e}")
+    return None
