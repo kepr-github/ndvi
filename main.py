@@ -12,7 +12,7 @@ app = Flask(__name__, static_folder='./templates/image')
 @app.get("/")
 def index():
     # ベースマップを作成
-    map = folium.Map(location=[43.873597078, 145.05133317], zoom_start=15)
+    map = folium.Map(location=[42.983880196, 141.371933788], zoom_start=15)
  
     # JSONファイルが保存されているフォルダのパス
     json_folder_path = 'JSON'  # ここに実際のパスを指定
@@ -38,6 +38,8 @@ def sample_form_temp():
          # フォームから'uuid'と'date'を取得
         req1 = request.form['uuid']
         req2 = request.form['date']  # 日付のデータをフォームから取得
+        if req2 =='':
+            req2 = '2023-07-21'
 
         print(req1, req2)
         # 日付の形式が正しいかチェック

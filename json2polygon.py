@@ -56,8 +56,22 @@ def add_polygons_to_map(map, polygons):
             fill_color='blue'
         )
         # ポリゴンにポップアップを追加（重心の座標を含む）
-        popup_text = f"畑ID: {label}<br>重心座標: {centroid[0]}, {centroid[1]}"
-        polygon.add_child(folium.Popup(popup_text))
+        popup_html = f"""
+            <!DOCTYPE html>
+            <div>
+                畑ID: {label}<br>
+                重心座標: {centroid[0]}, {centroid[1]}
+                <form action="/address" method="post">
+                    <input type="text" name="uuid" value="{label}">
+                    <input type="date" name="date">
+                    <button type="submit" class="btn btn-primary">詳細を見る</button>
+                </form>
+            </div>
+        """
+        iframe = folium.IFrame(popup_html, width=250, height=150)
+        popup = folium.Popup(iframe, max_width=250)
+
+        polygon.add_child(popup)
         # ポリゴンをマップに追加
         polygon.add_to(map)
 
