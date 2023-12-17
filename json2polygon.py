@@ -59,12 +59,21 @@ def add_polygons_to_map(map, polygons):
         popup_html = f"""
             <!DOCTYPE html>
             <div>
-                畑ID: {label}<br>
-                重心座標: {centroid[0]}, {centroid[1]}
-                <form>
-                    <input type="date" id='date-{label}' name="date" value="2023-07-21">
+                <form action="/address" method="post">
+                    <div class="form-group">
+                        <label class="control-label" for="pop_uuid">
+                            畑ID:{label}<br>
+                            重心座標: {centroid[0]}, {centroid[1]}
+                        </label>
+                        <input type="hidden" id="pop_uuid" name = "pop_uuid" class="form-control" value={label}>
+                    </div>
+                    <!-- 日付入力フィールド -->
+                    <div class="form-group">
+                        <label class="control-label" for="pop_date">日付</label>
+                        <input type="date" id='pop_date' name="pop_date" class="form-control" value="2023-07-21">
+                    </div>
+                    <button type="submit" class="btn btn-primary">この畑を見る</button>
                 </form>     
-                <button onclick="window.parent.setFormData('{label}', document.getElementById('date-{label}').value)" class="btn btn-primary">この畑を見る</button>
             </div>
         """
 

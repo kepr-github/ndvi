@@ -12,7 +12,7 @@ app = Flask(__name__, static_folder='./templates/image')
 @app.get("/")
 def index():
     # ベースマップを作成
-    map = folium.Map(location=[42.983880196, 141.371933788], zoom_start=15)
+    map = folium.Map(location=[42.998196652, 141.407992252], zoom_start=15)
  
     # JSONファイルが保存されているフォルダのパス
     json_folder_path = 'JSON'  # ここに実際のパスを指定
@@ -36,28 +36,26 @@ def sample_form_temp():
 
     if request.method == 'POST':
          # フォームから'uuid'と'date'を取得
-        req1 = request.form['uuid']
-        if req1 =='':
-            req1 = '4f3c5e84-0178-4f81-aa6e-5033c696d0ae'
-        req2 = request.form['date']  # 日付のデータをフォームから取得
-        if req2 =='':
-            req2 = '2023-07-21'
+        uuid = request.form['pop_uuid']
+        date = request.form['pop_date']  # 日付のデータをフォームから取得
+        if date =='':
+            date = '2023-07-21'
 
-        print(req1, req2)
+        print(uuid, date)
         # 日付の形式が正しいかチェック
         try:
             # 日付の形式を確認（'YYYY-MM-DD'形式であることを確認）
-            datetime.strptime(req2, '%Y-%m-%d')
+            datetime.strptime(date, '%Y-%m-%d')
         except ValueError:
             # 日付の形式が不正な場合はエラーメッセージとともにフォームを再表示
             error_msg = "日付の形式が正しくありません。YYYY-MM-DD形式で入力してください。"
             return render_template('index.html', error=error_msg)
         
         # 関数の使用
-        image_path = save_ndvi_image_from_uuid(polygon_uuid=req1, date_start_str=req2)  
+        image_path = save_ndvi_image_from_uuid(polygon_uuid=uuid, date_start_str=date)  
         print(f"画像が保存されました: {image_path}")
         # 'map.html'にデータを渡してレンダリング
-        return render_template('map.html', polygon_uuid=req1, date=req2, image_path=image_path)
+        return render_template('map.html', polygon_uuid=uuid, date=date, image_path=image_path)
     else:
         return render_template('index.html')
     

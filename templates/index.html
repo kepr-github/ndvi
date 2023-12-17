@@ -42,26 +42,13 @@
     <div class="card">
       <h5 class="card-header">NDVI マップ作成</h5>
       <div class="card-body">
-          <form action="/address" method="post">
-              
-              <!-- 日付入力フィールド -->
-              <div class="form-group">
-                  <label class="control-label" for="date">日付</label>
-                  <input type="date" id = 'date' name="date" class="form-control">
-              </div>
-              <!-- 情報表示用の入力フィールド -->
-              <div class="form-group">
-                <label class="control-label" for="uuid">畑ID</label>
-                <input type="text" id="uuid" name = "uuid" placeholder="畑ID" class="form-control">
-              </div>
-              <button type="submit" class="btn btn-primary">送信</button>
-          </form>
+        <!-- Foliumマップを表示するためのコンテナ -->
+        <div id="map">{{ map|safe }}</div>
       </div>
    
    
     
-   <!-- Foliumマップを表示するためのコンテナ -->
-    <div id="map">{{ map|safe }}</div>
+
   </div>
   
 
