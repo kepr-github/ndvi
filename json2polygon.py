@@ -61,15 +61,14 @@ def add_polygons_to_map(map, polygons):
             <div>
                 畑ID: {label}<br>
                 重心座標: {centroid[0]}, {centroid[1]}
-                <form action="/address" method="post">
-                    <input type="text" name="uuid" value="{label}">
-                    <input type="date" name="date">
-                    <button type="submit" class="btn btn-primary">詳細を見る</button>
-                </form>
+                <form>
+                    <input type="date" id='date-{label}' name="date" value="2023-07-21">
+                </form>     
+                <button onclick="window.parent.setFormData('{label}', document.getElementById('date-{label}').value)" class="btn btn-primary">この畑を見る</button>
             </div>
         """
-        iframe = folium.IFrame(popup_html, width=250, height=150)
-        popup = folium.Popup(iframe, max_width=250)
+
+        popup = folium.Popup(popup_html, max_width=250)
 
         polygon.add_child(popup)
         # ポリゴンをマップに追加

@@ -37,6 +37,8 @@ def sample_form_temp():
     if request.method == 'POST':
          # フォームから'uuid'と'date'を取得
         req1 = request.form['uuid']
+        if req1 =='':
+            req1 = '4f3c5e84-0178-4f81-aa6e-5033c696d0ae'
         req2 = request.form['date']  # 日付のデータをフォームから取得
         if req2 =='':
             req2 = '2023-07-21'
