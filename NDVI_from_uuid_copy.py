@@ -5,13 +5,13 @@ from sentinelhub import (
 )
 from datetime import datetime, timedelta
 import matplotlib
-matplotlib.use('Agg') #TkinterとMatplotlibの競合回避のためにMatplotlibの非GUIバックエンドの使用
+matplotlib.use('Agg') # TkinterとMatplotlibの競合回避のためにMatplotlibの非GUIバックエンドの使用
 import matplotlib.pyplot as plt
 import japanize_matplotlib # 日本語を画像タイトルに表示するために必要
 from concurrent.futures import ThreadPoolExecutor
 from json2polygon import get_coordinates_from_uuid
 
-# SSL証明書の検証を無視する設定（セキュリティ上のリスクがあるため注意が必要です）
+# SSL証明書の検証を無視する設定
 ssl._create_default_https_context = ssl._create_unverified_context
 
 # Sentinel Hubの設定
@@ -125,7 +125,7 @@ evalscript_true_color = """
         }
     """
 
-def save_ndvi_image_from_uuid(polygon_uuid='47eae6fe-2a44-4e6a-8d72-2fa84be7fd0a', date_start_str='2023-07-21'):
+def save_ndvi_image_from_uuid_2(polygon_uuid='47eae6fe-2a44-4e6a-8d72-2fa84be7fd0a', date_start_str='2023-07-21'):
     # JSONファイルから座標を取得
     aoi_coords_wgs84 = find_first_matching_file('JSON', polygon_uuid)
     if not aoi_coords_wgs84:
@@ -133,14 +133,14 @@ def save_ndvi_image_from_uuid(polygon_uuid='47eae6fe-2a44-4e6a-8d72-2fa84be7fd0a
 
     # バウンディングボックスの設定
     aoi_bbox = BBox(bbox=calculate_bounds(aoi_coords_wgs84), crs=CRS.WGS84)
-
+    
     # 時間間隔の設定
     date_start = datetime.strptime(date_start_str, '%Y-%m-%d')
-    date_end = date_start + timedelta(days=5)     # 衛星は5日間隔で飛ぶため最低1枚の画像を取得するために5日足す
+    date_end = date_start + timedelta(days=5)
     time_interval = (date_start, date_end.strftime('%Y-%m-%d'))
 
     # 時間範囲とバウンディングボックスで衛星画像を検索
-    results = search_catalog(aoi_bbox, time_interval)
+    results = search_catalog(aoi_bbox,time_interval)
     print("Total number of results:", len(results))
     for result in results:
         print(result)
@@ -182,15 +182,16 @@ def save_ndvi_image_from_uuid(polygon_uuid='47eae6fe-2a44-4e6a-8d72-2fa84be7fd0a
     plt.axis('off')  # 軸を非表示にする
 
     # 全体のタイトルを設定
-    plt.suptitle('Photo taken: ' + polygon_uuid + ' @ '+ taken_date)
+    plt.suptitle('Photo taken: ' + polygon_uuid + ' @ '+taken_date)
 
     # サブプロット間と周辺の余白を調整
     fig.subplots_adjust(left=0.05, wspace=0.3)
 
+    ...
 
-    # 画像として保存
+    # 画像保存
     image_path = 'templates/image/temporary/ndvi_image.png'
     plt.savefig(image_path, bbox_inches='tight', pad_inches=0)
-    plt.close()  # プロットをクローズ
+    plt.close()
 
     return image_path
