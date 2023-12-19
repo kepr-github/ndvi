@@ -196,3 +196,43 @@ def save_true_and_NDVI_side_by_side(true_img, ndvi_img, polygon_uuid, taken_date
     plt.close()  # プロットをクローズ
 
     return image_path
+
+from folium import raster_layers
+def add_image_to_map(map, ndvi_img, uuid):
+    """
+    指定されたFoliumマップにNDVI画像を追加する。
+
+    Args:
+    map (folium.Map): Foliumマップオブジェクト。
+    ndvi_img: NDVI画像
+    uuid: 畑ID
+    """
+    aoi_coords_wgs84 = find_first_matching_file('JSON', uuid)
+    if not aoi_coords_wgs84:
+        return None
+
+    # バウンディングボックスの設定
+    my_bbox=calculate_bounds(aoi_coords_wgs84)
+    
+    # ImageOverlay に適合する形式に変換
+    image_overlay_bounds = [[my_bbox[0][1], my_bbox[0][0]], [my_bbox[1][1], my_bbox[1][0]]]
+
+    
+
+    # 画像として保存
+    image_path = 'templates/image/temporary/ndvi_image.png'
+    plt.imshow(ndvi_img, cmap='coolwarm')
+    plt.axis('off')
+    plt.savefig(image_path, bbox_inches='tight', pad_inches=0)
+    plt.close()
+
+    # ImageOverlay で画像をマップに追加
+    raster_layers.ImageOverlay(
+        image=image_path,
+        bounds=image_overlay_bounds,
+        opacity=0.99  # 透過度の設定（0.0: 完全透明, 1.0: 不透明）
+    ).add_to(map)
+
+    overlay_map_html = map._repr_html_()
+
+    return overlay_map_html
