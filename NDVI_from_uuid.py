@@ -182,7 +182,7 @@ def save_ndvi_image_from_uuid(polygon_uuid='47eae6fe-2a44-4e6a-8d72-2fa84be7fd0a
     plt.axis('off')  # 軸を非表示にする
 
     # 全体のタイトルを設定
-    plt.suptitle('Photo taken: ' + polygon_uuid + ' @ '+ taken_date)
+    plt.suptitle('畑ID: ' + polygon_uuid + ' 撮影日: '+ taken_date)
 
     # サブプロット間と周辺の余白を調整
     fig.subplots_adjust(left=0.05, wspace=0.3)

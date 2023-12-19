@@ -28,7 +28,8 @@ def load_polygons_from_json(file_path, encoding='utf-8'):
             centroid_lat = feature['properties'].get('point_lat', None)
             centroid = (centroid_lat, centroid_lng) if centroid_lat is not None and centroid_lng is not None else None
             polygon_uuid = feature['properties'].get('polygon_uuid', 'No UUID')
-            polygons.append((coordinates, centroid, polygon_uuid))
+            local_government_cd = feature['properties'].get('local_government_cd', 'No Local Government Code')
+            polygons.append((coordinates, centroid, polygon_uuid, local_government_cd))
 
         return polygons
 
@@ -47,14 +48,17 @@ def add_polygons_to_map(map, polygons):
     map (folium.Map): Foliumマップオブジェクト。
     polygons (list of tuple): ポリゴンの座標、重心の座標、UUIDを含むリスト。
     """
-    for coords, centroid, label in polygons:
+    for coords, centroid, uuid, local_gov_cd in polygons:
         # Polygonインスタンスを作成
         polygon = folium.Polygon(
             locations=coords,
             color='blue',
             fill=True,
-            fill_color='blue'
+            fill_color='rgba(0,0,0,0)'
         )
+        short_uuid = uuid[-5:]
+        pref = get_local_government_name_by_code_json(local_gov_cd)
+
         # ポリゴンにポップアップを追加（重心の座標を含む）
         popup_html = f"""
             <!DOCTYPE html>
@@ -62,10 +66,12 @@ def add_polygons_to_map(map, polygons):
                 <form action="/address" method="post">
                     <div class="form-group">
                         <label class="control-label" for="pop_uuid">
-                            畑ID:{label}<br>
-                            重心座標: {centroid[0]}, {centroid[1]}
+                            畑ID末尾5桁:{short_uuid}<br>
+                            重心座標: {centroid[0]}, {centroid[1]}<br>
+                            行政区コード:{local_gov_cd}<br>
+                            {pref}
                         </label>
-                        <input type="hidden" id="pop_uuid" name = "pop_uuid" class="form-control" value={label}>
+                        <input type="hidden" id="pop_uuid" name = "pop_uuid" class="form-control" value={uuid}>
                     </div>
                     <!-- 日付入力フィールド -->
                     <div class="form-group">
@@ -110,3 +116,29 @@ def get_coordinates_from_uuid(file_path, polygon_uuid):
     except Exception as e:
         print(f"エラーが発生しました: {e}")
     return None
+
+# JSONファイルから地方自治体コードと対応する名称を読み込む
+local_gov_file_path_json = 'LocalGovCode.json'
+
+# JSONファイルの読み込み
+with open(local_gov_file_path_json, 'r', encoding='utf-8') as file:
+    local_gov_data_json = json.load(file)
+
+def get_local_government_name_by_code_json(local_gov_cd):
+    """
+    指定された地方自治体コードに対応する都道府県名と市区町村名を返す（JSONバージョン）。
+
+    Args:
+    local_gov_cd (int): 地方自治体コード。
+
+    Returns:
+    tuple: 都道府県名と市区町村名のタプル。該当する地方自治体がない場合はメッセージを返す。
+    """
+    # 入力されたコードに対応するデータを検索
+    for item in local_gov_data_json:
+        if item['団体コード'] == local_gov_cd:
+            prefecture = item['都道府県名\n（漢字）']
+            city = item['市区町村名\n（漢字）']
+            return prefecture, city
+    return "該当する地方自治体が見つかりません。"
+
