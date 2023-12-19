@@ -57,26 +57,27 @@ def add_polygons_to_map(map, polygons):
             fill_color='rgba(0,0,0,0)'
         )
         short_uuid = uuid[-5:]
-        pref = get_local_government_name_by_code_json(local_gov_cd)
+        address = get_local_government_name_by_code_json(local_gov_cd)
+        pref_city_name = address[0] + address[1]
 
         # ポリゴンにポップアップを追加（重心の座標を含む）
         popup_html = f"""
             <!DOCTYPE html>
             <div>
-                <form action="/address" method="post">
+                <form action="/address" method="post" target="_top">
                     <div class="form-group">
                         <label class="control-label" for="pop_uuid">
-                            畑ID末尾5桁:{short_uuid}<br>
-                            重心座標: {centroid[0]}, {centroid[1]}<br>
-                            行政区コード:{local_gov_cd}<br>
-                            {pref}
+                            {pref_city_name}<br>
+                            <br>
+                            畑ID 末尾 5桁:{short_uuid}<br>
+                            重心座標: {centroid[0]}, {centroid[1]}<br>                           
                         </label>
                         <input type="hidden" id="pop_uuid" name = "pop_uuid" class="form-control" value={uuid}>
                     </div>
                     <!-- 日付入力フィールド -->
                     <div class="form-group">
                         <label class="control-label" for="pop_date">日付</label>
-                        <input type="date" id='pop_date' name="pop_date" class="form-control" value="2023-07-21">
+                        <input type="date" id='pop_date' name="pop_date" class="form-control">
                     </div>
                     <button type="submit" class="btn btn-primary">この畑を見る</button>
                 </form>     
@@ -129,7 +130,7 @@ def get_local_government_name_by_code_json(local_gov_cd):
     指定された地方自治体コードに対応する都道府県名と市区町村名を返す（JSONバージョン）。
 
     Args:
-    local_gov_cd (int): 地方自治体コード。
+    local_gov_cd : 地方自治体コード。
 
     Returns:
     tuple: 都道府県名と市区町村名のタプル。該当する地方自治体がない場合はメッセージを返す。

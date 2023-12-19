@@ -125,7 +125,7 @@ evalscript_true_color = """
         }
     """
 
-def save_ndvi_image_from_uuid(polygon_uuid='47eae6fe-2a44-4e6a-8d72-2fa84be7fd0a', date_start_str='2023-07-21'):
+def get_ndvi_image_from_uuid(polygon_uuid='47eae6fe-2a44-4e6a-8d72-2fa84be7fd0a', date_start_str='2023-07-21'):
     # JSONファイルから座標を取得
     aoi_coords_wgs84 = find_first_matching_file('JSON', polygon_uuid)
     if not aoi_coords_wgs84:
@@ -168,7 +168,9 @@ def save_ndvi_image_from_uuid(polygon_uuid='47eae6fe-2a44-4e6a-8d72-2fa84be7fd0a
     print(
         f"Single element in the list is of type {type(ndvi_imgs[-1])} and has shape {ndvi_imgs[-1].shape}"
     )
+    return {'true_img':true_img, 'ndvi_img':ndvi_img, 'taken_date': taken_date}
 
+def save_true_and_NDVI_side_by_side(true_img, ndvi_img, polygon_uuid, taken_date):
     # Matplotlibのsubplotを使用して、TrueColorとNDVIを並べて表示
     fig, axs = plt.subplots(1,2, figsize = (12, 6))
 
