@@ -47,18 +47,8 @@ def sample_form_temp():
          # フォームから'uuid'と'date'を取得
         uuid = request.form['pop_uuid']
         date = request.form['pop_date']  # 日付のデータをフォームから取得
-        if date =='':
-            date = '2023-07-21'
-
+        
         print(uuid, date)
-        # 日付の形式が正しいかチェック
-        try:
-            # 日付の形式を確認（'YYYY-MM-DD'形式であることを確認）
-            datetime.strptime(date, '%Y-%m-%d')
-        except ValueError:
-            # 日付の形式が不正な場合はエラーメッセージとともにフォームを再表示
-            error_msg = "日付の形式が正しくありません。YYYY-MM-DD形式で入力してください。"
-            return render_template('index.html', error=error_msg)
         
         map = global_map
 

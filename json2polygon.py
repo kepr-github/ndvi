@@ -39,7 +39,7 @@ def load_polygons_from_json(file_path, encoding='utf-8'):
 
 
 
-import folium
+import folium, datetime
 def add_polygons_to_map(map, polygons):
     """
     指定されたFoliumマップにポリゴンを追加する。
@@ -48,6 +48,14 @@ def add_polygons_to_map(map, polygons):
     map (folium.Map): Foliumマップオブジェクト。
     polygons (list of tuple): ポリゴンの座標、重心の座標、UUIDを含むリスト。
     """
+
+     # 現在の日付から5日前の日付を計算
+    five_days_ago = datetime.datetime.now() - datetime.timedelta(days=5)
+    formatted_date = five_days_ago.strftime('%Y-%m-%d')
+
+    # 選択可能な最も古い日付
+    min_date = "2015-07-01"
+
     for coords, centroid, uuid, local_gov_cd in polygons:
         # Polygonインスタンスを作成
         polygon = folium.Polygon(
@@ -77,7 +85,7 @@ def add_polygons_to_map(map, polygons):
                     <!-- 日付入力フィールド -->
                     <div class="form-group">
                         <label class="control-label" for="pop_date">日付</label>
-                        <input type="date" id='pop_date' name="pop_date" class="form-control">
+                        <input type="date" id='pop_date' name="pop_date" class="form-control" value="{formatted_date}" min="{min_date}" max="{formatted_date}">
                     </div>
                     <button type="submit" class="btn btn-primary">この畑を見る</button>
                 </form>     
