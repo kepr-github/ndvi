@@ -125,7 +125,7 @@ evalscript_true_color = """
         }
     """
 
-def get_ndvi_image_from_uuid(polygon_uuid='47eae6fe-2a44-4e6a-8d72-2fa84be7fd0a', date_start_str='2023-07-21'):
+def get_ndvi_image_from_uuid(polygon_uuid, date_start_str):
     # JSONファイルから座標を取得
     aoi_coords_wgs84 = find_first_matching_file('JSON', polygon_uuid)
     if not aoi_coords_wgs84:
@@ -191,7 +191,7 @@ def save_true_and_NDVI_side_by_side(true_img, ndvi_img, polygon_uuid, taken_date
 
 
     # 画像として保存
-    image_path = 'templates/image/temporary/ndvi_image.png'
+    image_path = 'static/image/temporary/ndvi_image.png'
     plt.savefig(image_path, bbox_inches='tight', pad_inches=0)
     plt.close()  # プロットをクローズ
 
@@ -220,7 +220,7 @@ def add_image_to_map(map, ndvi_img, uuid):
     
 
     # 画像として保存
-    image_path = 'templates/image/temporary/ndvi_image.png'
+    image_path = 'static/image/temporary/ndvi_image.png'
     plt.imshow(ndvi_img, cmap='coolwarm')
     plt.axis('off')
     plt.savefig(image_path, bbox_inches='tight', pad_inches=0)

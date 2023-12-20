@@ -1,12 +1,13 @@
 #from flask_bootstrap import Bootstrap
+import json
 import folium
-from flask import Flask, render_template, request 
+from flask import Flask, jsonify, render_template, request 
 from datetime import datetime
 from json2polygon import load_polygons_from_json, add_polygons_to_map
 import os
-from NDVI_from_uuid import get_ndvi_image_from_uuid, save_true_and_NDVI_side_by_side, add_image_to_map
+from NDVI_from_uuid import get_ndvi_image_from_uuid, add_image_to_map
 
-app = Flask(__name__, static_folder='./templates/image')
+app = Flask(__name__, static_folder='static')
 #bootstrap = Bootstrap(app)
 
 # グローバル変数として map_html を定義
@@ -71,10 +72,24 @@ def sample_form_temp():
     else:
         return render_template('index.html')
     
-@app.get("/layout")
-def layout():
-    return render_template('layout.html')
+# JSON データを返すエンドポイント
+@app.route('/get_local_gov_data')
+def get_local_gov_data():
+    with open('LocalGovCode.json', 'r', encoding='utf-8') as file:
+        local_gov_data = json.load(file)
+    return jsonify(local_gov_data)
 
+# 団体コードを返すエンドポイント
+@app.route('/get_gov_code')
+def get_gov_code():
+    prefecture = request.args.get('prefecture')
+    municipality = request.args.get('municipality')
+    with open('LocalGovCode.json', 'r', encoding='utf-8') as file:
+        local_gov_data = json.load(file)
+        for item in local_gov_data:
+            if item['都道府県名\n（漢字）'] == prefecture and item['市区町村名\n（漢字）'] == municipality:
+                return jsonify({'団体コード': item['団体コード']})
+    return jsonify({'団体コード': 'Not Found'})
 
 
 if __name__ == '__main__':
