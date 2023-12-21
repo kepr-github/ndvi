@@ -21,15 +21,11 @@ def index():
     map = folium.Map(location=[42.998196652, 141.407992252], zoom_start=15)
  
     # JSONファイルが保存されているフォルダのパス
-    json_folder_path = 'JSON'  # ここに実際のパスを指定
+    file_path = 'JSON/2023_011053.json'  # ここに実際のパスを指定
 
-    # 指定されたフォルダ内のすべてのJSONファイルを処理
-    for filename in os.listdir(json_folder_path):
-        if filename.endswith('.json'):
-            file_path = os.path.join(json_folder_path, filename)
-            polygons = load_polygons_from_json(file_path)
-            add_polygons_to_map(map, polygons)
-    
+    polygons = load_polygons_from_json(file_path)
+    add_polygons_to_map(map, polygons)
+
     global_map = map
 
     # マップを HTML 文字列として取得
@@ -57,8 +53,8 @@ def sample_form_temp():
         overlay_map_html = add_image_to_map(map, images['ndvi_img'], uuid) 
        
 
-        # 'map.html'にデータを渡してレンダリング
-        return render_template('map.html', lap_map=overlay_map_html,uuid = uuid, taken_date = images['taken_date'])
+        # 'index.html'にデータを渡してレンダリング
+        return render_template('index.html', map=overlay_map_html,uuid = uuid, taken_date = images['taken_date'])
     else:
         return render_template('index.html')
     
@@ -81,6 +77,33 @@ def get_gov_code():
                 return jsonify({'団体コード': item['団体コード']})
     return jsonify({'団体コード': 'Not Found'})
 
+# 団体コードに基づいて JSON ファイルをロードし、マップを作成するエンドポイント
+@app.route('/get_map')
+def get_map():
+    global global_map
+    gov_code = request.args.get('gov_code')
+    file_path = f'JSON/2023_{gov_code}.json'
+
+    # JSON データをロード
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+
+    # マップを作成
+    lat = data['features'][0]['geometry']['coordinates'][0][0][1]
+    lon = data['features'][0]['geometry']['coordinates'][0][0][0]
+
+    map = folium.Map(location=[lat, lon], zoom_start=15)
+
+    polygons = load_polygons_from_json(file_path)
+    add_polygons_to_map(map, polygons)
+
+    global_map = map
+
+    # マップを HTML 文字列として取得
+    map_html = map._repr_html_()
+
+    # HTMLテンプレートにマップをレンダリング
+    return render_template('map.html', map=map_html)
 
 if __name__ == '__main__':
     app.run()

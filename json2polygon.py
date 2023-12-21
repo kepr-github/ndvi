@@ -150,3 +150,4 @@ def get_local_government_name_by_code_json(local_gov_cd):
             city = item['市区町村名\n（漢字）']
             return prefecture, city
     return "該当する地方自治体が見つかりません。"
+

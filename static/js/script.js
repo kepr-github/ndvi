@@ -8,11 +8,18 @@ document.addEventListener('DOMContentLoaded', function() {
         loadMunicipalities(selectedPrefecture);
     });
 
-    // ロードするボタンがクリックされたら団体コードを表示
-    document.getElementById('load-button').addEventListener('click', function() {
+    // 市町村が選択されたら団体コードを表示
+    document.getElementById('municipality-select').addEventListener('change', function() {
         let selectedPrefecture = document.getElementById('prefecture-select').value;
         let selectedMunicipality = document.getElementById('municipality-select').value;
         displayGovCode(selectedPrefecture, selectedMunicipality);
+    });
+
+    // ロードするボタンがクリックされたら地図を更新
+    document.getElementById('load-button').addEventListener('click', function() {
+        let selectedPrefecture = document.getElementById('prefecture-select').value;
+        let selectedMunicipality = document.getElementById('municipality-select').value;
+        getMapByGovCode(selectedPrefecture, selectedMunicipality);
     });
 });
 
@@ -74,6 +81,22 @@ function displayGovCode(prefecture, municipality) {
     .then(response => response.json())
     .then(data => {
         document.getElementById('gov-code').textContent = data['団体コード'];
+    })
+}
+
+// 団体コードから地図を取得する関数
+function getMapByGovCode(prefecture, municipality) {
+    fetch(`/get_gov_code?prefecture=${prefecture}&municipality=${municipality}`)
+    .then(response => response.json())
+    .then(data => {
+        const gov_code = data['団体コード'];
+
+        // gov_code が取得できた後に地図を取得する
+        fetch(`/get_map?gov_code=${gov_code}`)
+        .then(response => response.text())
+        .then(mapHtml => {
+            document.getElementById('map').innerHTML = mapHtml;
+        });
     });
 }
 
